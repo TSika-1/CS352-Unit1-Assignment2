@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class ContestDriver {
@@ -10,9 +10,9 @@ public class ContestDriver {
 		return RAND.nextBoolean();
 	}
 
-	// Step 2: build n uniquely named Contestants in ONE ArrayList
-	private static ArrayList<Contestant> createContestants(int n) {
-		ArrayList<Contestant> line = new ArrayList<>(n);
+	// Step 2: build n uniquely named Contestants in ONE LinkedList
+	private static LinkedList<Contestant> createContestants(int n) {
+		LinkedList<Contestant> line = new LinkedList<>();
 		for (int i = 0; i < n; i++) {
 			line.add(new Contestant("Contestant" + i, 18 + (i % 50)));
 		}
@@ -24,7 +24,7 @@ public class ContestDriver {
 	//  - correct:   remove and insert at front; everything before 'next' shifts
 	//               right, so the next unprocessed one is at next+1.
 	//  - incorrect: remove and append; the next unprocessed one slides into 'next'.
-	private static void playRound(ArrayList<Contestant> line, boolean verbose) {
+	private static void playRound(LinkedList<Contestant> line, boolean verbose) {
 		int n = line.size();
 		int next = 0;
 		for (int count = 0; count < n; count++) {
@@ -43,22 +43,24 @@ public class ContestDriver {
 		}
 	}
 
-	private static String names(ArrayList<Contestant> line) {
+	private static String names(LinkedList<Contestant> line) {
 		StringBuilder sb = new StringBuilder();
 		for (Contestant c : line) sb.append(c.getName()).append(' ');
 		return sb.toString();
 	}
 
 	// Step 5: record each Contestant's position at the end of a round
-	private static void recordPositions(ArrayList<Contestant> line) {
-		for (int i = 0; i < line.size(); i++) {
-			line.get(i).recordPosition(i);
-		}
-	}
+	private static void recordPositions(LinkedList<Contestant> line) {
+    int i = 0;
+    for (Contestant c : line) {
+        c.recordPosition(i);
+        i++;
+    }
+}
 
 	// Steps 6/7: time the rounds only (fairness recording is NOT timed)
 	private static void timedRun(int n, int rounds) {
-		ArrayList<Contestant> line = createContestants(n);
+		LinkedList<Contestant> line = createContestants(n);
 		long start = System.nanoTime();
 		for (int r = 0; r < rounds; r++) {
 			playRound(line, false);
@@ -75,17 +77,17 @@ public class ContestDriver {
 		System.out.println(ac);
 
 		// Step 2: small list
-		ArrayList<Contestant> small = createContestants(10);
+		LinkedList<Contestant> small = createContestants(10);
 		System.out.println("Created " + small.size() + " contestants: " + names(small));
 
 		// Steps 3-4: one verbose round on 5 contestants to verify by hand
-		ArrayList<Contestant> five = createContestants(5);
+		LinkedList<Contestant> five = createContestants(5);
 		System.out.println("Start: " + names(five));
 		playRound(five, true);
 		System.out.println("End:   " + names(five));
 
 		// Step 5: 8 contestants, 12 rounds, averages
-		ArrayList<Contestant> eight = createContestants(8);
+		LinkedList<Contestant> eight = createContestants(8);
 		for (int r = 0; r < 12; r++) {
 			playRound(eight, false);
 			recordPositions(eight);
